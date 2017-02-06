@@ -45,8 +45,12 @@ def get_share_price():
     price = scrape("http://uk.finance.yahoo.com/q?s=ERIC-B.ST", 'data-reactid="250">(.+?)</span>')
     exrate = scrape("http://themoneyconverter.com/GBP/SEK.aspx", 'SEK/GBP = (.+?)</div>')
 
-    value = (float(price[0]) / float(exrate[0])) * no_shares
-
+    try:
+        value = (float(price[0]) / float(exrate[0])) * no_shares
+    except IndexError:
+        print("There was an issue with the web scrape")
+        return None
+    
     output = {'today': str(datetime.today()), 'todays_price': float(price[0]), 'todays_exchange': float(exrate[0]),
               'total_value': value}
     output_subject = "Total share value: %.2f" % output['total_value']
